@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FitZone Gym Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1rem 2rem;
+            margin-bottom: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+        }
+
+        .page {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Login Page Styles */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 70vh;
+        }
+
+        .login-form {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 3rem;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .login-form h2 {
+            text-align: center;
+            margin-bottom: 2rem;
+            color: #333;
+            font-size: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .login-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Packages Page Styles */
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .package-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .package-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .package-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+        }
+
+        .package-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .package-name {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .package-price {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .package-features {
+            list-style: none;
+            margin-bottom: 2rem;
+        }
+
+        .package-features li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+        }
+
+        .package-features li:before {
+            content: '✓';
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 0.5rem;
+        }
+
+        .select-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 1rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .select-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Scheduling Page Styles */
+        .schedule-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+        }
+
+        .schedule-form {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            background: white;
+        }
+
+        .time-slots {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .time-slot {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .time-slot:hover {
+            background: #e9ecef;
+        }
+
+        .time-slot.selected {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+        }
+
+        .time-slot.booked {
+            background: #ffebee;
+            color: #c62828;
+            cursor: not-allowed;
+        }
+
+        .schedule-btn {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+        }
+
+        .schedule-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(76, 175, 80, 0.4);
+        }
+
+        .page-title {
+            text-align: center;
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 1rem;
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .login-form {
+                padding: 2rem;
+            }
+
+            .packages-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar">
+            <div class="logo">🏋️ FitZone Gym</div>
+            <div class="nav-links">
+                <button class="nav-btn active" onclick="showPage('login')">Login</button>
+                <button class="nav-btn" onclick="showPage('packages')">Packages</button>
+                <button class="nav-btn" onclick="showPage('schedule')">Schedule</button>
+            </div>
+        </nav>
+
+        <!-- Login Page -->
+        <div id="login" class="page active">
+            <h1 class="page-title">Welcome to FitZone</h1>
+            <div class="login-container">
+                <form class="login-form" onsubmit="handleLogin(event)">
+                    <h2>Member Login</h2>
+                    <div class="form-group">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" name="password" required>
+                    </div>
+                    <button type="submit" class="login-btn">Login</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Packages Page -->
+        <div id="packages" class="page">
+            <h1 class="page-title">Choose Your Fitness Package</h1>
+            <div class="packages-grid">
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3 class="package-name">Basic Plan</h3>
+                        <div class="package-price">₹2,999/month</div>
+                    </div>
+                    <ul class="package-features">
+                        <li>Access to gym equipment</li>
+                        <li>Locker facility</li>
+                        <li>Basic fitness assessment</li>
+                        <li>Mobile app access</li>
+                        <li>Email support</li>
+                    </ul>
+                    <button class="select-btn" onclick="selectPackage('Basic')">Select Plan</button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3 class="package-name">Premium Plan</h3>
+                        <div class="package-price">₹4,999/month</div>
+                    </div>
+                    <ul class="package-features">
+                        <li>All Basic Plan features</li>
+                        <li>Personal trainer (2 sessions/week)</li>
+                        <li>Group fitness classes</li>
+                        <li>Nutritional guidance</li>
+                        <li>Priority booking</li>
+                        <li>Shower facilities</li>
+                    </ul>
+                    <button class="select-btn" onclick="selectPackage('Premium')">Select Plan</button>
+                </div>
+
+                <div class="package-card">
+                    <div class="package-header">
+                        <h3 class="package-name">Elite Plan</h3>
+                        <div class="package-price">₹7,999/month</div>
+                    </div>
+                    <ul class="package-features">
+                        <li>All Premium Plan features</li>
+                        <li>Personal trainer (4 sessions/week)</li>
+                        <li>Custom workout plans</li>
+                        <li>Meal planning service</li>
+                        <li>24/7 gym access</li>
+                        <li>Massage therapy (2 sessions/month)</li>
+                        <li>VIP locker room access</li>
+                    </ul>
+                    <button class="select-btn" onclick="selectPackage('Elite')">Select Plan</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Schedule Page -->
+        <div id="schedule" class="page">
+            <h1 class="page-title">Schedule Your Workout</h1>
+            <div class="schedule-container">
+                <div class="schedule-form">
+                    <div class="form-group">
+                        <label for="workout-type">Workout Type</label>
+                        <select id="workout-type" onchange="updateTimeSlots()">
+                            <option value="">Select Workout Type</option>
+                            <option value="cardio">Cardio Training</option>
+                            <option value="strength">Strength Training</option>
+                            <option value="yoga">Yoga Class</option>
+                            <option value="personal">Personal Training</option>
+                            <option value="group">Group Fitness</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="workout-date">Date</label>
+                        <input type="date" id="workout-date" onchange="updateTimeSlots()">
+                    </div>
+                    <div class="form-group">
+                        <label for="trainer">Preferred Trainer</label>
+                        <select id="trainer">
+                            <option value="">Any Available Trainer</option>
+                            <option value="john">John Smith - Strength Expert</option>
+                            <option value="sarah">Sarah Johnson - Yoga Instructor</option>
+                            <option value="mike">Mike Brown - Cardio Specialist</option>
+                            <option value="emma">Emma Davis - Personal Trainer</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div id="time-slots-container" style="display: none;">
+                    <h3>Available Time Slots</h3>
+                    <div class="time-slots" id="time-slots">
+                        <!-- Time slots will be populated by JavaScript -->
+                    </div>
+                </div>
+
+                <button class="schedule-btn" onclick="bookSession()" id="book-btn" style="display: none;">Book Session</button>
+                <div class="success-message" id="success-message">
+                    Your workout session has been successfully booked!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTimeSlot = null;
+        let currentUser = null;
+        let bookedSlots = {}; // Store booked slots
+
+        function showPage(pageId) {
+            // Hide all pages
+            const pages = document.querySelectorAll('.page');
+            pages.forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update navbar buttons
+            const navBtns = document.querySelectorAll('.nav-btn');
+            navBtns.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            // Simple validation (in real app, this would be server-side)
+            if (username && password) {
+                currentUser = username;
+                alert(`Welcome, ${username}! You are now logged in.`);
+                showPage('packages');
+                
+                // Update navbar to show logged in state
+                const navBtns = document.querySelectorAll('.nav-btn');
+                navBtns.forEach(btn => btn.classList.remove('active'));
+                navBtns[1].classList.add('active'); // Packages button
+            } else {
+                alert('Please enter both username and password.');
+            }
+        }
+
+        function selectPackage(packageName) {
+            if (!currentUser) {
+                alert('Please login first to select a package.');
+                showPage('login');
+                return;
+            }
+            
+            const confirmation = confirm(`Are you sure you want to select the ${packageName} plan?`);
+            if (confirmation) {
+                alert(`Great! You have selected the ${packageName} plan. You can now schedule your workouts.`);
+                showPage('schedule');
+                
+                // Update navbar
+                const navBtns = document.querySelectorAll('.nav-btn');
+                navBtns.forEach(btn => btn.classList.remove('active'));
+                navBtns[2].classList.add('active'); // Schedule button
+            }
+        }
+
+        function updateTimeSlots() {
+            const workoutType = document.getElementById('workout-type').value;
+            const workoutDate = document.getElementById('workout-date').value;
+            
+            if (workoutType && workoutDate) {
+                const timeSlotsContainer = document.getElementById('time-slots-container');
+                const timeSlotsDiv = document.getElementById('time-slots');
+                const bookBtn = document.getElementById('book-btn');
+                
+                timeSlotsContainer.style.display = 'block';
+                bookBtn.style.display = 'block';
+                
+                // Generate time slots based on workout type
+                const timeSlots = generateTimeSlots(workoutType);
+                timeSlotsDiv.innerHTML = '';
+                
+                timeSlots.forEach(slot => {
+                    const slotDiv = document.createElement('div');
+                    slotDiv.className = 'time-slot';
+                    slotDiv.textContent = slot;
+                    
+                    // Check if slot is already booked
+                    const slotKey = `${workoutDate}-${slot}`;
+                    if (bookedSlots[slotKey]) {
+                        slotDiv.classList.add('booked');
+                        slotDiv.textContent += ' (Booked)';
+                    } else {
+                        slotDiv.onclick = () => selectTimeSlot(slotDiv, slot);
+                    }
+                    
+                    timeSlotsDiv.appendChild(slotDiv);
+                });
+            }
+        }
+
+        function generateTimeSlots(workoutType) {
+            const baseSlots = [
+                '06:00 AM', '07:00 AM', '08:00 AM', '09:00 AM', '10:00 AM',
+                '11:00 AM', '12:00 PM', '01:00 PM', '02:00 PM', '03:00 PM',
+                '04:00 PM', '05:00 PM', '06:00 PM', '07:00 PM', '08:00 PM'
+            ];
+            
+            // Filter slots based on workout type
+            switch(workoutType) {
+                case 'yoga':
+                    return ['06:00 AM', '07:00 AM', '06:00 PM', '07:00 PM'];
+                case 'personal':
+                    return ['09:00 AM', '10:00 AM', '11:00 AM', '02:00 PM', '03:00 PM', '04:00 PM'];
+                case 'group':
+                    return ['07:00 AM', '12:00 PM', '06:00 PM', '07:00 PM'];
+                default:
+                    return baseSlots;
+            }
+        }
+
+        function selectTimeSlot(slotElement, slot) {
+            // Remove previous selection
+            const prevSelected = document.querySelector('.time-slot.selected');
+            if (prevSelected) {
+                prevSelected.classList.remove('selected');
+            }
+            
+            // Select new slot
+            slotElement.classList.add('selected');
+            selectedTimeSlot = slot;
+        }
+
+        function bookSession() {
+            if (!currentUser) {
+                alert('Please login first.');
+                showPage('login');
+                return;
+            }
+            
+            const workoutType = document.getElementById('workout-type').value;
+            const workoutDate = document.getElementById('workout-date').value;
+            const trainer = document.getElementById('trainer').value;
+            
+            if (!workoutType || !workoutDate || !selectedTimeSlot) {
+                alert('Please select workout type, date, and time slot.');
+                return;
+            }
+            
+            // Book the slot
+            const slotKey = `${workoutDate}-${selectedTimeSlot}`;
+            bookedSlots[slotKey] = {
+                user: currentUser,
+                workoutType: workoutType,
+                trainer: trainer || 'Any Available'
+            };
+            
+            // Show success message
+            const successMessage = document.getElementById('success-message');
+            successMessage.style.display = 'block';
+            successMessage.innerHTML = `
+                <strong>Booking Confirmed!</strong><br>
+                Date: ${workoutDate}<br>
+                Time: ${selectedTimeSlot}<br>
+                Workout: ${workoutType.charAt(0).toUpperCase() + workoutType.slice(1)}<br>
+                Trainer: ${trainer || 'Any Available'}
+            `;
+            
+            // Reset form
+            document.getElementById('workout-type').value = '';
+            document.getElementById('workout-date').value = '';
+            document.getElementById('trainer').value = '';
+            document.getElementById('time-slots-container').style.display = 'none';
+            document.getElementById('book-btn').style.display = 'none';
+            selectedTimeSlot = null;
+            
+            // Hide success message after 5 seconds
+            setTimeout(() => {
+                successMessage.style.display = 'none';
+            }, 5000);
+        }
+
+        // Set minimum date to today
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('workout-date').setAttribute('min', today);
+        });
+    </script>
+</body>
+</html>
